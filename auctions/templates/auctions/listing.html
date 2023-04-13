@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="row mx-3">
+        {% if user.is_authenticated %}
+            {% if isListingInWatchlist %}
+                <form action="{% url 'removewatchlist' id=listingdetail.id %}" method="POST"> <!--listingdetail.id?????-->
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove from Watchlist!</button>
+                </form>
+            {% else %}
+                <form action="{% url 'addwatchlist' id=listingdetail.id %}" method="POST"> <!--listingdetail.id?????-->
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Add to Watchlist!</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+    <h2>Pokemon:{{ listingdetail.title }}</h2>
+    <img src="{{ listingdetail.imageUrl }}" alt="{{ listingdetail.title }}" height=" 380px">
+    <p>{{ listingdetail.description }}</p>
+    <p>Owner:{{ listingdetail.owner }}</p>
+    <h5>Category: {{ listingdetail.category }}</h5>
+    <h5>Price: ${{ listingdetail.price }}</h5>
+    
+    
+    <h4>Comments</h4>
+        {% if user.is_authenticated %}
+            <form action="{% url 'addcomment' id=listingdetail.id %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="comment">Add Comment</label>
+                    <input type="text" name="newComment" placeholder="Add new Comment">
+                    <button type="submit" class="btn btn-primary">Add!</button>
+                </div>
+            </form>
+        {% endif %}
+        <ul class="list-group">
+            {% for comment in allcomments %}
+                <li class="list-group-item disabled">
+                    {{ comment.message }}
+                    </br>
+                    <p>Posted by <strong>{{ comment.author }}</strong></p>
+                </li>
+            {% endfor %}
+        </ul>
+{% endblock %}
